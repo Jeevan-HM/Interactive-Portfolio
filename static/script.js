@@ -124,6 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 payload.current_code = window.currentViewedCode;
             }
 
+            // Capture any text the user currently has highlighted on the screen
+            const selection = window.getSelection();
+            if (selection && selection.toString().trim()) {
+                payload.selected_text = selection.toString().trim();
+            }
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {

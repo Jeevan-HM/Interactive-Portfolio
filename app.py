@@ -94,8 +94,14 @@ def chat():
         message = data.get("message", "")
         current_file = data.get("current_file", "")
         current_code = data.get("current_code", "")
+        selected_text = data.get("selected_text", "")
 
         bio_content = load_bio()
+
+        # Conditionally append selected_text emphasis
+        selected_text_context = ""
+        if selected_text:
+            selected_text_context = f"\n\n**CRITICAL CONTEXT**: The user has currently highlighted the following text entirely on their screen right now. If their question is ambiguous, assume they are asking specifically about this highlighted text:\n```\n{selected_text}\n```"
 
         prompt = f"""
         You are J.A.I.D. (Jeevan's Artificial Intelligence Delegate), an AI assistant dedicated to helping people learn about Jeevan Hebbal Manjunath.
@@ -131,7 +137,7 @@ def chat():
         File Content:
         ```
         {current_code}
-        ```
+        ```{selected_text_context}
 
         **User Input:**
         {message}
