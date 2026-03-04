@@ -49,15 +49,36 @@ document.addEventListener("DOMContentLoaded", () => {
         isChatbotOpen = !isChatbotOpen;
         if (isChatbotOpen) {
             chatbotContainer.classList.add('active');
-            chatInput.focus();
+            chatInput.focus({ preventScroll: true }); // Prevent jumping and blurring
             chatbotFloatingBtn.style.transform = 'scale(0) rotate(90deg)';
             chatbotFloatingBtn.style.opacity = '0';
             setTimeout(() => chatbotFloatingBtn.style.pointerEvents = 'none', 300);
+
+            // Check if there is already text selected on screen when opened
+            updateSelectionPill();
         } else {
             chatbotContainer.classList.remove('active');
             chatbotFloatingBtn.style.pointerEvents = 'auto';
             chatbotFloatingBtn.style.transform = 'scale(1) rotate(0deg)';
             chatbotFloatingBtn.style.opacity = '1';
+        }
+    };
+
+    // Helper to visually update the pill
+    const updateSelectionPill = () => {
+        if (!isChatbotOpen) return;
+
+        const selection = window.getSelection();
+        const text = selection ? selection.toString().trim() : '';
+
+        const selectionPill = document.getElementById('selection-context-pill');
+        const selectionPillText = document.getElementById('selection-pill-text');
+
+        if (text) {
+            selectionPillText.textContent = text.length > 30 ? text.substring(0, 30) + '...' : text;
+            selectionPill.style.display = 'flex';
+        } else {
+            selectionPill.style.display = 'none';
         }
     };
 
@@ -148,6 +169,15 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 addMessageToChat(data.answer || "Sorry, I ran into an issue.", false);
             }
+
+            // 5. Clear selection internally to mirror Copilot behavior
+            if (window.getSelection) {
+                if (window.getSelection().empty) {
+                    window.getSelection().empty();
+                } else if (window.getSelection().removeAllRanges) {
+                    window.getSelection().removeAllRanges();
+                }
+            }
         } catch (error) {
             console.error("Chat Error:", error);
             loaderDiv.remove();
@@ -165,5 +195,26 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault(); // Prevents line breaks
             sendMessage();
         }
+    });
+
+    // Handle Context Highlighting Visuals
+    const selectionPill = document.getElementById('selection-context-pill');
+    const selectionPillText = document.getElementById('selection-pill-text');
+
+    // Prevent clicking inside the chatbot from clearing external selections
+    chatbotContainer.addEventListener('mousedown', (e) => {
+        // Only prevent default if we're not clicking an input field explicitly
+        if (e.target !== chatInput && e.target !== chatSubmitBtn) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('selectionchange', () => {
+        // Update visually if chatbot is currently open
+        if (isChatbotOpen) {
+            updateSelectionPill();
+        }
+
+
     });
 });
