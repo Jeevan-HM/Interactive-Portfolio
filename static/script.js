@@ -64,6 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // Store the selected text securely. This way if the user clicks inside our input box 
+    // and naturally causes the browser's native text selection to clear, we don't lose the context!
+    let activeSavedSelection = '';
+
     // Helper to visually update the pill
     const updateSelectionPill = () => {
         if (!isChatbotOpen) return;
@@ -71,11 +75,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const selection = window.getSelection();
         const text = selection ? selection.toString().trim() : '';
 
+        // Only update if text exists. If it's empty because they clicked our
+        // input box, we want to retain whatever was set previously!
+        if (text) {
+            activeSavedSelection = text;
+        }
+
         const selectionPill = document.getElementById('selection-context-pill');
         const selectionPillText = document.getElementById('selection-pill-text');
 
-        if (text) {
-            selectionPillText.textContent = text.length > 30 ? text.substring(0, 30) + '...' : text;
+        if (activeSavedSelection) {
+            selectionPillText.textContent = activeSavedSelection.length > 30 ? activeSavedSelection.substring(0, 30) + '...' : activeSavedSelection;
             selectionPill.style.display = 'flex';
         } else {
             selectionPill.style.display = 'none';
@@ -146,9 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Capture any text the user currently has highlighted on the screen
-            const selection = window.getSelection();
-            if (selection && selection.toString().trim()) {
-                payload.selected_text = selection.toString().trim();
+            if (activeSavedSelection) {
+                payload.selected_text = activeSavedSelection;
             }
 
             const response = await fetch('/api/chat', {
@@ -171,6 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // 5. Clear selection internally to mirror Copilot behavior
+            activeSavedSelection = '';
+            updateSelectionPill();
+
             if (window.getSelection) {
                 if (window.getSelection().empty) {
                     window.getSelection().empty();
@@ -210,11 +222,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener('selectionchange', () => {
-        // Update visually if chatbot is currently open
-        if (isChatbotOpen) {
+        // Only run if chatbot is open
+        if (!isChatbotOpen) return;
+
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+
+        // If the user actively highlights new text, update our saved state.
+        if (text) {
+            activeSavedSelection = text;
+            updateSelectionPill();
+        } else {
+            // Only clear the selection if they didn't just click inside the chat menu
+            if (document.activeElement !== chatInput) {
+                activeSavedSelection = '';
+                updateSelectionPill();
+            }
+        }
+    });
+
+    // We only clear the selection if they explicitly close the chatbot
+    chatbotFloatingBtn.addEventListener('click', () => {
+        if (!isChatbotOpen) {
+            activeSavedSelection = '';
             updateSelectionPill();
         }
+    });
 
-
+    chatbotToggleBtn.addEventListener('click', () => {
+        if (!isChatbotOpen) {
+            activeSavedSelection = '';
+            updateSelectionPill();
+        }
     });
 });
