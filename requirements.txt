@@ -209,7 +209,7 @@ tzlocal==5.2
 ultralytics==8.4.19
 ultralytics-thop==2.0.18
 uritemplate==4.2.0
-urllib3==2.1.0
+urllib3==2.6.3
 uuid-utils==0.14.1
 uvicorn==0.41.0
 uvloop==0.22.1
