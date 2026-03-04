@@ -15,7 +15,7 @@ click==8.1.6
 colorama==0.4.6
 coloredlogs==15.0.1
 dataclasses-json==0.5.13
-Django==4.2.3
+Django==4.2.29
 exceptiongroup==1.1.2
 fastapi==0.99.1
 flatbuffers==23.5.26
