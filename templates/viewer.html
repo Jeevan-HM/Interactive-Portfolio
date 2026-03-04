@@ -129,6 +129,75 @@
         .chatbot-container {
             position: absolute !important;
         }
+
+        /* Jupyter Notebook Styling */
+        .notebook-container {
+            max-width: 900px;
+            margin: 0 auto;
+            color: #ddd;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        .notebook-cell {
+            margin-bottom: 24px;
+        }
+
+        .notebook-markdown {
+            padding: 10px 0;
+            line-height: 1.6;
+        }
+
+        .notebook-markdown pre {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .notebook-markdown code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .notebook-markdown h1,
+        .notebook-markdown h2,
+        .notebook-markdown h3,
+        .notebook-markdown h4 {
+            color: #fff;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .notebook-code-cell {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .notebook-code-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            color: #888;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notebook-code-content {
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .notebook-output {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            color: #bbb;
+        }
     </style>
 </head>
 
@@ -177,6 +246,7 @@
 
     {% include 'components/chatbot.html' %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         // store global context for the chatbot
         window.currentViewedFile = "";
@@ -213,8 +283,89 @@
 
                     window.currentViewedFile = path;
                     window.currentViewedCode = "[Image File Rendered]";
+                } else if (lowerPath.endsWith('.ipynb')) {
+                    // Try to render as Jupyter Notebook
+                    const response = await fetch(fileUrl);
+                    if (!response.ok) throw new Error("Could not load file. " + response.statusText);
+                    const content = await response.text();
+
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = content;
+                    codeArea.innerHTML = '';
+
+                    try {
+                        const notebook = JSON.parse(content);
+                        const container = document.createElement('div');
+                        container.className = 'notebook-container';
+
+                        if (notebook.cells) {
+                            notebook.cells.forEach((cell, idx) => {
+                                const cellDiv = document.createElement('div');
+                                cellDiv.className = 'notebook-cell';
+
+                                const cellData = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
+
+                                if (cell.cell_type === 'markdown') {
+                                    const mdDiv = document.createElement('div');
+                                    mdDiv.className = 'notebook-markdown';
+                                    mdDiv.innerHTML = marked.parse(cellData);
+                                    cellDiv.appendChild(mdDiv);
+                                } else if (cell.cell_type === 'code') {
+                                    const codeWrapper = document.createElement('div');
+                                    codeWrapper.className = 'notebook-code-cell';
+
+                                    const header = document.createElement('div');
+                                    header.className = 'notebook-code-header';
+                                    header.textContent = `[${cell.execution_count || ' '}] Code`;
+                                    codeWrapper.appendChild(header);
+
+                                    const contentDiv = document.createElement('div');
+                                    contentDiv.className = 'notebook-code-content';
+                                    const codePre = document.createElement('pre');
+                                    codePre.style.margin = '0';
+                                    const codeEl = document.createElement('code');
+                                    codeEl.className = 'language-python';
+                                    codeEl.textContent = cellData;
+                                    codePre.appendChild(codeEl);
+                                    contentDiv.appendChild(codePre);
+                                    codeWrapper.appendChild(contentDiv);
+
+                                    hljs.highlightElement(codeEl);
+
+                                    // Handle Basic Outputs
+                                    if (cell.outputs && cell.outputs.length > 0) {
+                                        let outText = '';
+                                        cell.outputs.forEach(out => {
+                                            if (out.text) {
+                                                outText += Array.isArray(out.text) ? out.text.join('') : out.text;
+                                            } else if (out.data && out.data['text/plain']) {
+                                                outText += Array.isArray(out.data['text/plain']) ? out.data['text/plain'].join('') : out.data['text/plain'];
+                                            }
+                                        });
+                                        if (outText.trim()) {
+                                            const outputDiv = document.createElement('div');
+                                            outputDiv.className = 'notebook-output';
+                                            outputDiv.textContent = outText;
+                                            codeWrapper.appendChild(outputDiv);
+                                        }
+                                    }
+                                    cellDiv.appendChild(codeWrapper);
+                                }
+                                container.appendChild(cellDiv);
+                            });
+                        }
+                        codeArea.appendChild(container);
+                    } catch (e) {
+                        // Fallback to text
+                        const pre = document.createElement('pre');
+                        const code = document.createElement('code');
+                        code.textContent = content;
+                        pre.appendChild(code);
+                        codeArea.appendChild(pre);
+                        hljs.highlightElement(code);
+                    }
                 } else {
-                    // Try to render as text/code
+                    // Try to render as generic text/code
                     const response = await fetch(fileUrl);
                     if (!response.ok) throw new Error("Could not load file. " + response.statusText);
                     const content = await response.text();
