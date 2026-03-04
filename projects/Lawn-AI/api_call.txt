@@ -1,0 +1,23 @@
+# api_keys = {
+#    "Y3V59uY34878X897878978X9S87l1a2w3n4a5i8X978X878X978X978X978X978X": "Your API Key",
+# }
+
+# http://0.0.0.0:8000/protected?api_key=a1n2u3r4a5g61j1e2e3v4a5n3k1u2n3a4l5Yj1u2p3i4t5e6r73V59uY34878X897878978X9S87l1a2w3n4a5i8Xaa11nn22uu33rr44aa55gg&input_string=your_input_string_here
+
+
+## Create an instance of APIKeyHeader with name "Authorization"
+# api_key_header = APIKeyHeader(name="Authorization")
+
+import requests
+
+server_url = "<YOUR_SERVER_URL>/protected"
+api_key = "<YOUR_API_KEY>"
+input_string = "<YOUR_INPUT_STRING>"
+
+headers = {"Authorization": api_key}
+data = {"input_string": input_string}
+
+response = requests.get(server_url, headers=headers, data=data)
+
+print(response.status_code)
+print(response.json())
