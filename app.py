@@ -84,7 +84,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    is_local = not bool(os.environ.get("VERCEL"))
+    return render_template("index.html", is_local=is_local)
 
 
 def get_tree(path):
