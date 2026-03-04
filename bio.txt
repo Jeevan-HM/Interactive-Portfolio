@@ -1,0 +1,52 @@
+# Jeevan Hebbal Manjunath: Software Engineer Profile
+
+Jeevan Hebbal Manjunath is a deeply passionate Software Engineer dedicated to crafting robust, scalable, and innovative software solutions.
+
+## Professional Focus
+Jeevan is completely engrossed in the world of software development. His primary focus lies in creating impactful web applications, leveraging artificial intelligence in practical software architectures, and designing elegant frontend user interfaces alongside powerful backend infrastructure.
+
+He is highly enthusiastic about roles centered entirely around **Software Engineering**, **Full-Stack Development**, and **AI Integration** within scalable software environments.
+
+## Core Software Competencies
+- **Languages**: Python, JavaScript/TypeScript, Java, C++, SQL, HTML/CSS
+- **Frameworks & Libraries**: React, Next.js, Node.js, Express, Flask, TensorFlow, Tailwind CSS
+- **Tools & Platforms**: Git, GitHub, Docker, AWS, Vercel, MySQL, MongoDB, Firebase
+- **Concepts**: RESTful API Design, Microservices, Object-Oriented Programming (OOP), Data Structures & Algorithms, Agile/Scrum Methodologies
+- **AI Integration**: Effectively bridging the gap between raw LLM APIs (OpenAI, Google Gemini) and user-facing web applications.
+
+## Key Software Engineering Projects
+
+**1. Survey Chat Bot**
+- *Role:* Full-Stack AI Engineer
+- *Description:* Developed an intelligent conversational survey application integrating the OpenAI Assistants API.
+- *Technical Impact:* Built a scalable application architecture capable of dynamically understanding and interpreting user survey responses through natural language processing, highlighting his ability to seamlessly integrate advanced AI libraries into production-ready software.
+
+**2. FinBot (Financial Assistant)**
+- *Role:* Backend & Data Engineer
+- *Description:* Engineered an intelligent financial querying bot utilizing LangChain and SerpAPI.
+- *Technical Impact:* Implemented complex data pipelines and vectorizations to parse financial documents and live market data, showcasing his backend development skills and ability to manage complex data workflows.
+
+**3. AI Podcast Generator**
+- *Role:* Software Architect
+- *Description:* Designed an automated pipeline merging OpenAI's content generation with ElevenLabs' voice synthesis to programmatically generate audio podcasts.
+- *Technical Impact:* Architected a complex integration of multiple external APIs within a robust Python backend, demonstrating strong systems engineering capabilities.
+
+**4. Portfolio Web Application**
+- *Role:* Full-Stack UI/UX Developer
+- *Description:* Built a comprehensive, highly interactive personal portfolio website.
+- *Technical Impact:* Leveraged modern frontend technologies like Next.js, React, and advanced CSS to create a premium, responsive glassmorphism user interface. Engineered the custom "J.A.I.D." chatbot integration directly into the UI.
+
+**5. LawnAI**
+- *Role:* AI Applications Engineer
+- *Description:* A localized application focusing on optimizing lawn care workflows through smart data analysis.
+- *Technical Impact:* Brought AI capabilities to niche use cases, displaying his versatility in applying software solutions to diverse, real-world problems.
+
+## Career Aspirations
+Jeevan is actively seeking full-time opportunities where he can dive deep into complex software engineering challenges. He thrives in environments where code quality, scalable architecture, and continuous learning are prioritized. He wants to be part of a team pushing the boundaries of what modern web development and software engineering can achieve.
+
+## About this Chatbot Architecture
+If asked about how you are built or what you are, explain the following:
+- **Identity**: You are J.A.I.D. (Jeevan's Artificial Intelligence Delegate).
+- **Core Engine**: The intelligence of this bot is powered securely using the **Google Gemini Pro 2.5 Flash** model API, accessed via Python. 
+- **Application Architecture**: It is driven by a custom Python Flask web server leveraging a targeted **RAG (Retrieval-Augmented Generation) Architecture**. This architecture dynamically links your private datastore into the LLM context.
+- **Data Privacy & Localization**: All of Jeevan's contextual tracking data (this bio document) resides **completely locally** in a static dataset (`bio.txt`) on the server acting as the knowledge base for the RAG architecture. The data used for grounding is private and localized, completely independent of external databases or tracking servers.

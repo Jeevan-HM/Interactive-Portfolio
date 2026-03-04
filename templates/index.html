@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A premium showcase of my recent AI and web projects.">
+    <title>Jeevan | Project Showcase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-effects">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>Featured Projects</h1>
+
+            <p>A curated collection of intelligent applications bridging the gap between cutting-edge AI and intuitive
+                web experiences.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="grid">
+            <!-- Project Cards -->
+            <div class="card" style="--delay: 0.1s">
+                <div class="card-icon">🎙️</div>
+                <h2>AI Podcast</h2>
+                <p>An automated audio generation pipeline utilizing OpenAI and ElevenLabs to curate unique, lifelike
+                    podcasting experiences.</p>
+                <a href="/view/AI-podcast" class="btn">View Source</a>
+            </div>
+
+            <div class="card" style="--delay: 0.2s">
+                <div class="card-icon">📈</div>
+                <h2>FinBot</h2>
+                <p>An intelligent financial assistant powered by natural language processing and SerperAPI, bringing
+                    streamlined financial insights to the user.</p>
+                <a href="/view/FinBot" class="btn">View Source</a>
+            </div>
+
+            <div class="card" style="--delay: 0.3s">
+                <div class="card-icon">💬</div>
+                <h2>Survey Chat Bot</h2>
+                <p>An interactive conversational survey agent natively utilizing the OpenAI Assistants API to gather
+                    focused, meaningful contextual insights.</p>
+                <a href="/view/Survey-Chat-Bot" class="btn">View Source</a>
+            </div>
+
+            <div class="card" style="--delay: 0.4s">
+                <div class="card-icon">🌱</div>
+                <h2>LawnAI</h2>
+                <p>A smart AI-driven application designed to optimize and refine everyday lawn care workflows.</p>
+                <a href="/view/LawnAI" class="btn">View Source</a>
+            </div>
+
+            <div class="card" style="--delay: 0.5s">
+                <div class="card-icon">💼</div>
+                <h2>Portfolio</h2>
+                <p>My foundational personal portfolio website demonstrating modern web design and comprehensive
+                    full-stack expertise.</p>
+                <a href="/view/Jeevan-HM-Portfolio" class="btn">View Source</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Jeevan HM. All rights reserved.</p>
+    </footer>
+
+    {% include 'components/chatbot.html' %}
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Viewing {{ project }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <style>
+        .viewer-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(24, 24, 27, 0.9);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar .back-btn {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: rgba(109, 40, 217, 0.15);
+            padding: 4px 10px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .sidebar .back-btn:hover {
+            background: rgba(109, 40, 217, 0.3);
+        }
+
+        .file-tree {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .file-tree ul {
+            list-style: none;
+            padding-left: 15px;
+            display: none;
+        }
+
+        .file-tree li.open>ul {
+            display: block;
+        }
+
+        .file-item {
+            cursor: pointer;
+            padding: 6px 4px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+        }
+
+        .file-item:hover,
+        .file-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .folder-icon::before {
+            content: "▶";
+            font-size: 0.6em;
+            display: inline-block;
+            transition: transform 0.2s;
+            margin-right: 4px;
+        }
+
+        li.open>.file-item>.folder-icon::before {
+            transform: rotate(90deg);
+        }
+
+        .code-area {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            /* Atom one dark bg matching hljs */
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+
+        /* Make chat float properly over everything */
+        .chatbot-floating-btn,
+        .chatbot-container {
+            position: absolute !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="viewer-container">
+        <div class="sidebar">
+            <h2>{{ project }} <a href="/" class="back-btn">← Home</a></h2>
+            <ul class="file-tree">
+                {% macro render_tree(nodes) %}
+                {% for node in nodes %}
+                {% if node.type == 'dir' %}
+                <li class="folder">
+                    <div class="file-item folder-name" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="folder-icon"></span> 📁 {{ node.name }}
+                    </div>
+                    <ul>
+                        {{ render_tree(node.children) }}
+                    </ul>
+                </li>
+                {% else %}
+                <li>
+                    <div class="file-item file-name" data-path="{{ node.path }}"
+                        onclick="loadFile('{{ node.path }}', this)">
+                        📄 {{ node.name }}
+                    </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% endmacro %}
+                {{ render_tree(tree) }}
+            </ul>
+        </div>
+        <div class="code-area" id="code-area">
+            <div class="empty-state">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <p>Select a file from the sidebar to view its source.</p>
+                <p style="font-size: 0.85em; opacity: 0.7;">Feel free to open J.A.I.D. in the bottom corner and ask
+                    questions about the current file!</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/chatbot.html' %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+        // store global context for the chatbot
+        window.currentViewedFile = "";
+        window.currentViewedCode = "";
+
+        async function loadFile(path, element) {
+            document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            const codeArea = document.getElementById('code-area');
+            codeArea.innerHTML = '<div class="empty-state">Loading...</div>';
+
+            try {
+                // Ensure encodeURIComponent handles all path characters
+                // split by slash, map encode, then join. This way the API matches paths accurately.
+                const pathParts = path.split('/').map(encodeURIComponent).join('/');
+                const response = await fetch('/api/file/' + pathParts);
+                if (!response.ok) throw new Error("Could not load file. " + response.statusText);
+                const content = await response.text();
+
+                window.currentViewedFile = path;
+                window.currentViewedCode = content;
+
+                const pre = document.createElement('pre');
+                const code = document.createElement('code');
+                code.textContent = content; // prevents html injection
+                pre.appendChild(code);
+                codeArea.innerHTML = '';
+                codeArea.appendChild(pre);
+
+                hljs.highlightElement(code);
+            } catch (err) {
+                codeArea.innerHTML = `<div class="empty-state" style="color:#ef4444;">Error: ${err.message}</div>`;
+                window.currentViewedFile = "";
+                window.currentViewedCode = "";
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

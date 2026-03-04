@@ -1,0 +1,61 @@
+# Python and Core Env Dependencies
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.flaskenv
+
+# Environment Management
+.venv/
+venv/
+ENV/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.mo
+*.pot
+.hypothesis/
+.pytest_cache/
+
+# UV Specfic
+.uv/
+
+# Local configuration vs-code
+.vscode/
+.vscode-test/
+*.code-workspace
+
+# Ignore the cloned sub-repositories (Projects) since they likely have their own Git histories 
+# and tracking them twice inside your master repo can cause git sub-module conflicts
+projects/AI-podcast/
+projects/FinBot/
+projects/Survey-Chat-Bot/
+projects/LawnAI/
+projects/Jeevan-HM-Portfolio/
+
+# Data Files & Personal Secrets
+*.log
+*.sqlite3
+live_share_link.txt

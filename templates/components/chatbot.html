@@ -1,0 +1,43 @@
+<!-- Chatbot Component -->
+<div class="chatbot-container" id="chatbot-container">
+    <div class="chatbot-header" id="chatbot-header">
+        <div class="chatbot-title">
+            <span class="online-indicator"></span>
+            🤖 J.A.I.D.
+        </div>
+        <button class="chatbot-toggle" id="chatbot-toggle-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 15l-6-6-6 6" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="chatbot-body" id="chatbot-body">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                Hi there! I'm <strong>J.A.I.D.</strong> (Jeevan's Artificial Intelligence Delegate). 👋<br><br>I'm
+                equipped with full knowledge about Jeevan, his experience, and his projects. Ask me anything about him!
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Ask about Jeevan..." autocomplete="off">
+            <button id="chat-submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<button class="chatbot-floating-btn" id="chatbot-floating-btn">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <span class="pulse-ring"></span>
+</button>
