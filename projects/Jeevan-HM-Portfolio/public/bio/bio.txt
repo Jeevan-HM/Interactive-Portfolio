@@ -1,0 +1,402 @@
+================================================================================
+JEEVAN HEBBAL MANJUNATH
+================================================================================
+Last Updated: March 2026
+
+================================================================================
+SECTION: IDENTITY & CONTACT
+================================================================================
+Full Name: Jeevan Hebbal Manjunath
+Location: Tempe, AZ, USA
+Email (Personal): jeevanhm308@gmail.com
+Email (University): jhebbalm@asu.edu
+LinkedIn: https://www.linkedin.com/in/jeevan-h-m
+GitHub: https://github.com/Jeevan-HM
+Portfolio Website: https://jeevan-hm.vercel.app
+Twitter/X: https://twitter.com/Jeevan_H_M
+YouTube: https://www.youtube.com/@jeevanhm3872
+ORCID: 0009-0006-2318-7316
+GitHub Repositories: 51 public repos
+Languages: Python, Rust, C++, JavaScript, MATLAB, SQL, Bash, C, Go
+
+================================================================================
+SECTION: PROFESSIONAL SUMMARY
+================================================================================
+Jeevan is a self-taught AI and Robotics engineer who builds intelligent autonomous systems from the ground up — spanning hardware integration, sensor fusion, learning-based control, and production-grade software deployment. He is currently pursuing an M.S. in Robotics & Autonomous Systems at Arizona State University (GPA: 3.78/4.0), with active research in Physical Reservoir Computing for soft robotic control at the RISE Lab and prior work on quadruped locomotion with sim-to-real reinforcement learning at the IDEA Lab.
+
+His industry experience includes productionizing YOLOv8 instance-segmentation services processing satellite imagery at scale, deploying RAG-based conversational AI assistants with evaluation guardrails, and engineering backend systems for India's national digital identity platform (DigiLocker). He is comfortable across the full stack: from low-level embedded systems (Raspberry Pi, STM32, ESP32), ROS/ROS 2 middleware, MuJoCo/Isaac Sim simulation, and SLAM/Cartographer, to high-level PyTorch deep learning, cloud infrastructure (AWS, GCP, Docker, Kubernetes), and modern web frameworks (Flask, FastAPI, Django, React).
+
+He was recognized with a "Best Hack for Social Good" award at DevHacks ASU 2025 and featured in ASU News for robotics research contributions in the ISTB12 building. He is a first-generation college student.
+
+================================================================================
+SECTION: EDUCATION
+================================================================================
+
+--- Degree 1 ---
+Institution: Arizona State University, Tempe, AZ
+Degree: M.S., Robotics & Autonomous Systems
+GPA: 3.78 / 4.0
+Expected Graduation: May 2026
+Status: Currently enrolled
+First-Generation College Student: Yes
+Notable: Featured in ASU News for work in ISTB12 Robotics & Autonomous Systems Lab (October 2025)
+
+--- Degree 2 ---
+Institution: Visvesvaraya Technological University, Bengaluru, India
+Degree: B.E., Electronics & Communication Engineering
+CGPA: 8.83 / 10.0 (approximately 3.8 / 4.0 on US scale)
+Distinction: Ranked First in the University
+Graduated: June 2023
+
+================================================================================
+SECTION: RESEARCH EXPERIENCE
+================================================================================
+
+--- Position 1 ---
+Title: Researcher
+Lab: RISE Lab, Arizona State University
+Location: Tempe, AZ
+Duration: June 2025 – Present
+Advisor: Dr. Wenlong Zhang
+Research Focus: Physical Reservoir Computing for Soft Robotics
+Collaboration: Cross-institutional with Virginia Tech
+
+Hardware & Data Acquisition Work:
+- Engineered an automated ROS + Python data acquisition pipeline that synchronizes high-frequency pneumatic pressure sensor streams (100+ Hz) with OptiTrack motion-capture trajectories (120 Hz) using ZMQ protocol, producing analysis-ready, high-dimensional time-series datasets for control modeling.
+- Designed and calibrated the physical sensor array for a multi-pouch pneumatic soft robotic arm, ensuring precise time-synchronization and validation across 10,000+ data points per experimental run.
+- Built custom data preprocessing and validation tooling that eliminated manual preprocessing and accelerated analysis workflows by 60%.
+
+Software, ML & Control Work:
+- Analyzed complex system dynamics using MATLAB and Python signal analysis, uncovering critical temporal dependencies, inter-pouch correlations, and nonlinear transients that directly shaped feature engineering for downstream closed-loop controllers.
+- Led baseline pneumatic control modeling using regularized linear regression with scikit-learn GridSearchCV hyperparameter optimization, achieving a 7% improvement in predictive accuracy over existing approaches.
+- Orchestrated cross-institutional collaboration with Virginia Tech researchers on advanced nonlinear control strategies: real-time forecasting with AutoTS, LSTM neural controllers, and policy-gradient RL that enhanced system stability by 12% in dynamic pressure scenarios.
+- Preparing research findings for potential submission to MECC 2026 conference, including LaTeX paper formatting and publication-quality figure creation.
+
+--- Position 2 ---
+Title: Research Aide
+Lab: IDEA Lab, Arizona State University
+Location: Tempe, AZ
+Duration: September 2024 – June 2025
+Advisor: Dr. Daniel Aukes
+Research Focus: Quadruped Locomotion & Multi-Sensor Fusion
+Research Program: MORE (Fulton Forge Student Research Expo, Spring 2025)
+
+Hardware & Sensor Integration Work:
+- Architected a multi-modal sensor fusion system for a Unitree Go2 quadruped robot, synchronizing IMU, RGB/depth cameras, and LiDAR data streams through ROS 2 middleware.
+- Implemented Extended Kalman Filtering to achieve centimeter-level pose accuracy and sub-5% velocity estimation error for stable locomotion and terrain mapping.
+- Configured and calibrated ultrasonic sensors for obstacle avoidance and environmental force sensors for adaptability in dynamic environments.
+
+Software, Simulation & RL Work:
+- Built a physics-accurate MuJoCo simulation environment and trained Proximal Policy Optimization (PPO) RL agents over 10M+ iterations with 16 parallel simulations, mastering three distinct gaits (walking, pacing, trotting) with 89% success rate in 5m forward locomotion.
+- Executed sim-to-real transfer using domain randomization, successfully deploying learned locomotion policies to physical hardware and reducing movement instability by 40%.
+- Developed a Flask-based web dashboard displaying real-time joint positions and LiDAR data at 20Hz, enabling dynamic tuning of 8+ gait parameters and cutting experiment iteration time from hours to minutes.
+
+Presentations:
+- Fulton Forge Student Research Expo (MORE Program, Spring 2025)
+- ASU Innovation Showcase (Spring 2025)
+
+================================================================================
+SECTION: INDUSTRY EXPERIENCE
+================================================================================
+
+--- Position 1 ---
+Title: Machine Learning Engineer (Freelance/Contract)
+Company: Jupiter AI Labs
+Location: Bengaluru, India
+Duration: August 2023 – January 2024
+
+Project A: Lawn AI — Satellite-Based Property Measurement System
+Description: End-to-end computer vision pipeline for automated lawn area measurement from satellite imagery, serving property assessment and pricing workflows.
+- Productionized a YOLOv8 instance-segmentation service processing Regrid API satellite imagery; deployed as a hardened Flask REST API on AWS with S3 integration, JWT authentication, and comprehensive error handling serving 500+ daily requests.
+- Curated and augmented a dataset of 1,700+ satellite images with precise boundary annotations, training a custom model achieving 95% segmentation accuracy and >90% precision in property boundary extraction.
+- Engineered geometric algorithms for square-footage calculation from segmented polygons, delivering <15% mean absolute error for accurate lawn area estimation.
+
+Project B: Honey Bot — RAG Healthcare Chatbot
+Description: Intelligent health assistant combining conversational AI with retrieval-augmented generation for safe, context-aware medical information delivery.
+- Architected an AI assistant integrating Rasa conversational AI with GPT-3.5 for contextual query understanding, handling 1,000+ health-related conversations weekly with 92% user satisfaction.
+- Implemented semantic search using ChromaDB vector database for clinic recommendations, with RAG retrieval guardrails that reduced inappropriate responses by 98% while maintaining personalized assistance.
+- Processed 50,000 medical documents into ChromaDB, achieving 68% reduction in incorrect information and 92% intent accuracy.
+
+--- Position 2 ---
+Title: Machine Learning Intern
+Company: Jupiter AI Labs
+Location: Bengaluru, India
+Duration: September 2022 – December 2022
+
+Project A: Real-Time Cargo Detection & Counting
+- Developed a computer vision system for maritime logistics using Detectron2 instance segmentation to detect, track, and count cargo containers from real-time video streams (65% baseline accuracy).
+- Implemented multi-object tracking with motion prediction, boosting count accuracy by 25% and reducing false positives through temporal consistency filtering across 300+ frames.
+
+Project B: Development & Testing for UpGrad
+- Designed 50+ hands-on ML exercises spanning Flask/FastAPI, data processing, model training, hyperparameter tuning, and visualization; achieved >85% automated-grading accuracy.
+- Implemented pytest test suites with ~95% code coverage, ensuring exercise reliability for 1,000+ students.
+
+--- Position 3 ---
+Title: Data Science Intern
+Company: Incipient Technologies Pvt. Ltd.
+Location: Bengaluru, India
+Duration: August 2021 – November 2021
+- Delivered custom object detection models using transfer learning and data augmentation, consistently achieving ~95% accuracy on proprietary datasets.
+- Collaborated cross-functionally with web development team, improving site usability scores by 30% through responsive design optimizations.
+
+--- Position 4 ---
+Title: Backend Development Intern
+Company: DigiLocker (Govt. of India)
+Location: Bengaluru, India
+Duration: September 2020 – December 2020
+Context: India's national digital identity platform serving 100M+ users.
+
+Project A: Name Match Algorithm
+- Engineered a Flask REST API combining fuzzy string matching with Soundex phonetic algorithms for government identity verification, achieving >93% accuracy on 10,000+ real-world name pairs across Indian languages.
+
+Project B: Real vs. Fake Face Detection
+- Built an anti-spoofing liveness detection model using deep learning to distinguish authentic faces from photos/masks/videos in real-time, achieving >0.95 precision and >0.92 recall.
+
+================================================================================
+SECTION: PROJECTS — ROBOTICS & HARDWARE
+================================================================================
+
+--- Project 1 ---
+Name: Fusion Robotics: Autonomous Quadruped–UR5 Testbed
+Hardware: Unitree Go2 quadruped (12-DOF) + Universal Robots UR5 arm (6-DOF)
+Software: ROS 2, DDS, Flask, WebSockets
+- Integrated a ROS 2 testbed combining a 12-DOF quadruped with a 6-DOF UR5 robotic arm, building 5+ custom control and state synchronization nodes with DDS communication.
+- Delivered a Flask web interface with WebSocket real-time telemetry and dynamic tuning of 8+ gait parameters.
+- Automated experiment loops reducing iteration time from 45 minutes to 8 minutes.
+- Presented at ASU Innovation Showcase (Spring 2025) with team members Aniruddha Anand Damle and Yeshwanth Reddy Gurreddy.
+Showcase Link: https://innovationshowcase.engineering.asu.edu/project/team-1-2/
+
+--- Project 2 ---
+Name: Nav-Fusion: Autonomous Navigation with TurtleBot4
+Hardware: TurtleBot4, RPLIDAR, OAK-D Camera, IMU
+Software: ROS 2, Nav2, Cartographer SLAM, Extended Kalman Filter, DWB path planner, custom behavior trees
+- Deployed an end-to-end ROS 2 navigation stack fusing RPLIDAR, OAK-D camera, and IMU data with Extended Kalman Filter.
+- Configured Cartographer SLAM at 5cm resolution and DWB path planner with custom behavior trees and recovery strategies.
+- Achieved 3cm positioning accuracy and 95% navigation success rate across multi-room environments with dynamic obstacle avoidance.
+
+--- Project 3 ---
+Name: Drift-Reduced Semantic Visual Odometry
+Software: PyTorch, NeRF (UC-NeRF), OCC-VO, Visual Odometry
+Dataset: nuScenes
+- Co-developed a hybrid visual odometry framework combining a real-time OCC-VO front end with a UC-NeRF-inspired refinement module.
+- Closed the loop by reinjecting refined poses to reduce drift, achieving 34% position error reduction.
+- Demonstrated IoU of 0.78 vs. 0.51 baseline in textureless environments on the nuScenes benchmark.
+
+--- Project 4 ---
+Name: WellnessHub — Health Monitoring Service
+Hardware: Raspberry Pi, 16×2 LCD Display, Apple Watch integration
+Software: GPT-3.5 Turbo, Web UI
+- Used GPT-3.5 Turbo for Apple Watch health data analysis, achieving ~93% accuracy in personalized health assessment.
+- Shipped both a web UI and a physical Raspberry Pi + 16×2 LCD interface for on-device health insights.
+GitHub: https://github.com/Jeevan-HM/Health-Analyzing-Service
+
+--- Project 5 ---
+Name: ShopDash — Automated Shopping Cart
+Hardware: Raspberry Pi, Barcode Scanner, 16×2 LCD Display
+Software: Computer Vision, QR Checkout System
+- Built a Raspberry Pi–powered supermarket cart with computer vision achieving 98% barcode scanning accuracy.
+- Implemented QR-based checkout with real-time billing, displaying on-cart item details via 16×2 LCD.
+- Published on ResearchGate (August 2022).
+GitHub: https://github.com/Jeevan-HM/Automated-Shopping-Cart
+
+================================================================================
+SECTION: PROJECTS — AI, ML & SOFTWARE
+================================================================================
+
+--- Project 1 ---
+Name: VocaLift — Assistive Audio Translation
+Award: Best Hack for Social Good — DevHacks ASU 2025 (March 29–30, 2025)
+Software: LSTM, Meta Audiocraft, librosa, Flask, Mel-spectrograms
+- Engineered a full-cycle pipeline to convert text-to-hum and hum-to-text using an LSTM translator over Mel-spectrograms for assistive communication.
+- Leveraged Meta's Audiocraft for high-quality audio generation and librosa for real-time pitch extraction.
+- Built as an accessibility tool empowering individuals with speech or hearing impairments.
+
+--- Project 2 ---
+Name: Podify AI — Podcast Generator with AI Voice Cloning & GPT-4
+Software: Flask, GPT-4, ElevenLabs Voice Cloning, Prompt Engineering
+- Flask web app generating podcast episodes from text prompts with ~95% coherence/relevance through prompt engineering.
+- Cloned YouTube speaker voices using ElevenLabs API for personalized audio content generation.
+GitHub: https://github.com/Jeevan-HM/AI-podcast
+
+--- Project 3 ---
+Name: FinBot — Financial AI Assistant
+Software: Django, ChromaDB, Web Scraping, AWS EC2
+- Django chatbot integrating web scraping with ChromaDB vector database on AWS EC2 for financial response retrieval.
+- Achieved ~95% accuracy extracting contextual responses from diverse financial data sources.
+GitHub: https://github.com/Jeevan-HM/FinBot
+
+================================================================================
+SECTION: PUBLICATIONS & SHOWCASES
+================================================================================
+
+1. "Adaptive Quadruped with Sensor Fusion for Precise Multi-Sensor Data Collection and Analysis"
+   Venue: Fulton Forge Student Research Expo (MORE Program, Spring 2025)
+   Link: https://forge.engineering.asu.edu/participant/hebbal-manjunath-jeevan/
+
+2. Quadruped–UR5 Robotics Testbed
+   Venue: ASU Innovation Showcase (Spring 2025)
+   Team: Aniruddha Anand Damle, Yeshwanth Reddy Gurreddy, Jeevan Hebbal Manjunath
+   Link: https://innovationshowcase.engineering.asu.edu/project/team-1-2/
+
+3. "Automated Shopping Cart"
+   Venue: ResearchGate, August 2022
+   Link: https://www.researchgate.net/publication/362900257_Automated_Shopping_Cart
+
+4. "Smart Health Monitoring and Analyzing Service"
+   Venue: ResearchGate, April 2023
+   Link: https://www.researchgate.net/publication/370410962_SMART_HEALTH_MONITORING_AND_ANALYZING_SERVICE
+
+5. Pneumatic Control Systems for Soft Robotics (Ongoing)
+   Lab: RISE Lab, Arizona State University
+   Target: MECC 2026 conference submission
+
+================================================================================
+SECTION: AWARDS & RECOGNITION
+================================================================================
+
+1. Best Hack for Social Good — DevHacks ASU 2025 (March 29–30, 2025)
+   Project: VocaLift assistive audio translation
+   Event: 24-hour hackathon with 200+ participants and 50+ projects
+
+2. Ranked First in University
+   Context: B.E. Electronics & Communication Engineering, Visvesvaraya Technological University
+
+3. Featured in ASU News (October 2025)
+   Context: Photographed working in the ISTB12 Robotics & Autonomous Systems Lab for the ISTB12 building feature story
+   Link: https://news.asu.edu/20251024-science-and-technology-istb-12-one-stop-shop-robotics-manufacturing
+
+4. First-Generation College Student
+   Context: Pursuing graduate education as the first in family
+
+================================================================================
+SECTION: TECHNICAL SKILLS — COMPLETE LIST
+================================================================================
+
+Programming Languages: Python (primary), C++ (primary), JavaScript, MATLAB, SQL, Bash, C
+
+Robotics & Control:
+- Frameworks: ROS, ROS 2, ZMQ
+- Simulation: MuJoCo, Gazebo, Isaac Sim
+- SLAM: Cartographer, ORB-SLAM
+- Navigation: Nav2, AMCL
+- Sensor Fusion: Extended Kalman Filter (EKF), Unscented Kalman Filter (UKF)
+- Motion Planning: MoveIt
+- CAD: SolidWorks, CATIA v5
+
+AI / Machine Learning:
+- Deep Learning Frameworks: PyTorch, TensorFlow, CUDA
+- Reinforcement Learning: PPO, SAC, TD3, GAE
+- Architectures: CNNs, LSTMs, Transformers
+- Computer Vision: YOLOv8, OpenCV, Detectron2, Point Clouds, 3D Vision
+- NLP: RAG, LangChain, BERT, GPT-3.5/4, Prompt Engineering
+- Time-Series: AutoTS, LSTMs, ACF
+- Other: Transfer Learning, AutoML, scikit-learn, GridSearchCV
+
+Cloud, DevOps & Infrastructure:
+- AWS: EC2, S3, SageMaker, Lambda, Elastic Beanstalk
+- GCP: Cloud Run, Vertex AI
+- Containers: Docker, Kubernetes
+- CI/CD: GitHub Actions, Jenkins, Ansible
+- Monitoring: Prometheus, Grafana
+- Other: Serverless, Azure ML, Azure DevOps
+
+Web & Backend:
+- Frameworks: Flask, FastAPI, Django
+- APIs: RESTful APIs
+- Frontend: React, WebSockets, Plotly.js
+- Protocols: DDS, ZMQ
+- Other: Node.js
+
+Databases & Data:
+- Relational: PostgreSQL, SQL
+- NoSQL: MongoDB, Redis
+- Vector: ChromaDB
+
+Embedded Systems & IoT:
+- Platforms: Raspberry Pi, STM32, ESP32
+- Peripherals: 16×2 LCD Displays, Barcode Scanners
+- Sensors: IMU, LiDAR, Ultrasonic, Pressure sensors, RGB/Depth cameras
+- Wearables: Apple Watch integration
+
+Tools: MATLAB, SolidWorks, Git, GitHub, Linux, LaTeX
+
+Soft Skills: Leadership, Communication, Teamwork, Cross-Functional Collaboration, Critical Thinking, Creativity, Strategic Thinking, Research, Documentation, Organization
+
+================================================================================
+SECTION: COMMUNITY & VOLUNTEERING
+================================================================================
+
+--- Activity 1 ---
+Role: Student Volunteer
+Organization: ASU International Students & Scholars Center (ISSC)
+Location: Tempe, AZ
+Status: Current
+- Orchestrated logistics for 15+ multicultural events serving 500+ international students.
+- Served as primary point of contact during events, processing 100+ check-ins per event.
+- Optimized event operations, reducing setup time by 25% and enhancing attendee satisfaction.
+
+--- Activity 2 ---
+Role: Volunteer Mentor
+Organization: Future for KIDS
+- Mentors youth through educational engagement and technology exposure.
+
+--- Activity 3 ---
+Role: Community Empowerment — Rural India
+- Spearheaded digital literacy initiatives in 8+ government schools, equipping 300+ students with digital payment and online safety skills.
+- Led grassroots environmental campaigns, establishing 5+ community waste collection points reducing improper disposal by ~40%.
+- Championed water conservation through village-level presentations, educating 500+ residents on rainwater harvesting and greywater management.
+
+================================================================================
+SECTION: PROFESSIONAL TESTIMONIALS
+================================================================================
+
+1. Ajit Kumar, Sr. Software Developer at DigiLocker:
+   "Jeevan exhibits exceptional learning abilities and consistently delivers outstanding performance, both as an individual contributor and a valuable team player. Additionally, he possesses strong technical and analytical skills."
+
+2. Rushikesh Dongaonkar Patil, Founder Director at Incipient Technologies Private Limited:
+   "Jeevan was prompt towards his work and had completed all his tasks on time. He is quick learner and was eager to learn new concepts and skills during the internship period."
+
+3. Moorchhana Pattanaik, Software Developer at DigiLocker:
+   "Jeevan excelled as an intern at Digilocker, specializing in machine learning for liveliness detection. His model efficiently distinguishes between live and fake photos using a single image, eliminating the need for video capture. Jeevan's conceptual strength in AI and timely task delivery were valuable contributions during his internship."
+
+================================================================================
+SECTION: CURRENT STATUS & JOB SEARCH
+================================================================================
+
+Current Status: Graduate student (final year), actively job searching
+Availability: Full-time starting May 2026
+Open To: Research internships, PhD opportunities (2026), open-source collaborations
+
+Target Roles:
+- Software Engineer
+- Robotics Engineer
+- ML/AI Engineer
+- Computer Vision Engineer
+- NLP Engineer
+
+Active Research:
+- Physical Reservoir Computing for soft robotic control (RISE Lab, ASU)
+- MECC 2026 conference paper preparation on pneumatic actuator control strategies
+
+Currently Learning:
+- Advanced RL algorithms (SAC, TD3)
+- 3D reconstruction, NeRF, and Gaussian splatting
+- Distributed robotics systems
+- Open-source ROS 2 perception stack development
+
+================================================================================
+SECTION: PERSONAL BACKGROUND
+================================================================================
+
+Hometown: Bangalore, Karnataka, India
+Nationality: Indian
+Current Residence: Tempe, AZ, USA
+Origin: Electronics & Communication Engineering background from Bengaluru
+First-Generation College Student: Yes
+Personality/Approach: Strong attention to technical accuracy, prefers authentic experience-based approaches over generic examples, eager to learn, quick to grasp and apply new technologies
+
+Tagline: "Making robots smarter, one gradient descent at a time."
+
+================================================================================
+END OF BIO DATA
+================================================================================

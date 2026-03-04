@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Answering Your Text...</title>
+</head>
+
+<body>
+    <h1>Your Answer - {{ purpose }}</h1>
+    <p>
+        {{ analyzed_text }}
+    </p>
+
+    <form action='/feedback' method='get'>
+        <p>Rate the Question:</p>
+        <input type="radio" id="good" name="rating" value="good">
+        <label for="good">Good answer, I am satisfied.</label><br>
+
+        <input type="radio" id="improve" name="rating" value="improve">
+        <label for="improve">Can Be Improved</label><br>
+
+        <input type="radio" id="bad" name="rating" value="bad">
+        <label for="bad">It is not good enough</label><br>
+
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

@@ -47,13 +47,8 @@ coverage.xml
 .vscode-test/
 *.code-workspace
 
-# Ignore the cloned sub-repositories (Projects) since they likely have their own Git histories 
-# and tracking them twice inside your master repo can cause git sub-module conflicts
-projects/AI-podcast/
-projects/FinBot/
-projects/Survey-Chat-Bot/
-projects/LawnAI/
-projects/Jeevan-HM-Portfolio/
+# Ignore the .git dirs inside projects if they ever appear
+projects/**/.git/
 
 # Data Files & Personal Secrets
 *.log
