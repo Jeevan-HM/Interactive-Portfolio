@@ -190,24 +190,47 @@
             codeArea.innerHTML = '<div class="empty-state">Loading...</div>';
 
             try {
-                // Ensure encodeURIComponent handles all path characters
-                // split by slash, map encode, then join. This way the API matches paths accurately.
                 const pathParts = path.split('/').map(encodeURIComponent).join('/');
-                const response = await fetch('/api/file/' + pathParts);
-                if (!response.ok) throw new Error("Could not load file. " + response.statusText);
-                const content = await response.text();
+                const fileUrl = '/api/file/' + pathParts;
 
-                window.currentViewedFile = path;
-                window.currentViewedCode = content;
+                // Simple check for common image formats
+                const lowerPath = path.toLowerCase();
+                const isImage = lowerPath.endsWith('.jpg') || lowerPath.endsWith('.jpeg') ||
+                    lowerPath.endsWith('.png') || lowerPath.endsWith('.svg') ||
+                    lowerPath.endsWith('.gif') || lowerPath.endsWith('.webp');
 
-                const pre = document.createElement('pre');
-                const code = document.createElement('code');
-                code.textContent = content; // prevents html injection
-                pre.appendChild(code);
-                codeArea.innerHTML = '';
-                codeArea.appendChild(pre);
+                if (isImage) {
+                    // Render as Image
+                    codeArea.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = fileUrl;
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.display = 'block';
+                    img.style.margin = '0 auto';
+                    codeArea.appendChild(img);
 
-                hljs.highlightElement(code);
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = "[Image File Rendered]";
+                } else {
+                    // Try to render as text/code
+                    const response = await fetch(fileUrl);
+                    if (!response.ok) throw new Error("Could not load file. " + response.statusText);
+                    const content = await response.text();
+
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = content;
+
+                    const pre = document.createElement('pre');
+                    const code = document.createElement('code');
+                    code.textContent = content; // prevents html injection
+                    pre.appendChild(code);
+                    codeArea.innerHTML = '';
+                    codeArea.appendChild(pre);
+
+                    hljs.highlightElement(code);
+                }
             } catch (err) {
                 codeArea.innerHTML = `<div class="empty-state" style="color:#ef4444;">Error: ${err.message}</div>`;
                 window.currentViewedFile = "";

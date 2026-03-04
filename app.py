@@ -9,7 +9,7 @@ import os
 
 import google.generativeai as genai
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_file
 
 load_dotenv()
 
@@ -61,10 +61,9 @@ def get_file(filepath):
     if not target_path.startswith(project_path):
         return "Forbidden", 403
     try:
-        with open(target_path, "r", encoding="utf-8") as f:
-            return f.read()
-    except UnicodeDecodeError:
-        return "Cannot display binary or non-text file", 400
+        from flask import send_file
+
+        return send_file(target_path)
     except Exception as e:
         return str(e), 500
 
