@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Podcast Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f13;
+            color: #e4e4f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #a1a1aa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #71717a;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input,
+        select {
+            background: #09090b;
+            border: 1px solid #27272a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #e4e4f0;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .btn-generate {
+            width: 100%;
+            margin-top: 24px;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-generate:hover {
+            opacity: 0.9;
+        }
+
+        .btn-generate:active {
+            transform: scale(0.99);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 32px;
+            display: none;
+            background: #09090b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .result h3 {
+            font-size: 1rem;
+            color: #a78bfa;
+            margin-bottom: 16px;
+        }
+
+        .transcript {
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #d4d4d8;
+        }
+
+        .speaker-name {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #71717a;
+            font-size: 0.9rem;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #27272a;
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            color: #f87171;
+            background: #1c0e0e;
+            border: 1px solid #3f1515;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .note {
+            font-size: 0.8rem;
+            color: #52525b;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="max-width: 700px; margin: 0 auto;">
+        <a href="/" class="back-link">← Back to Portfolio</a>
+        <h1>🎙️ AI Podcast Generator</h1>
+        <p class="subtitle">Generate a lifelike podcast conversation between any two people on any topic.</p>
+
+        <div class="card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Speaker One Name</label>
+                    <input type="text" id="speaker1" placeholder="e.g. Elon Musk" value="">
+                </div>
+                <div class="form-group">
+                    <label>Speaker Two Name</label>
+                    <input type="text" id="speaker2" placeholder="e.g. Joe Rogan" value="">
+                </div>
+                <div class="form-group full">
+                    <label>Topic</label>
+                    <input type="text" id="topic" placeholder="e.g. The future of AI" value="">
+                </div>
+                <div class="form-group">
+                    <label>Number of Turns</label>
+                    <select id="turns">
+                        <option value="2">2 turns</option>
+                        <option value="3" selected>3 turns</option>
+                        <option value="5">5 turns</option>
+                        <option value="7">7 turns</option>
+                        <option value="10">10 turns</option>
+                    </select>
+                </div>
+            </div>
+            <p class="note">Generates a written transcript powered by Google Gemini.</p>
+            <button class="btn-generate" id="generateBtn" onclick="generate()">✨ Generate Podcast</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            Generating your podcast script...
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3>📄 Podcast Transcript</h3>
+            <div class="transcript" id="transcript"></div>
+        </div>
+    </div>
+
+    <script>
+        async function generate() {
+            const speaker1 = document.getElementById('speaker1').value.trim();
+            const speaker2 = document.getElementById('speaker2').value.trim();
+            const topic = document.getElementById('topic').value.trim();
+            const turns = parseInt(document.getElementById('turns').value);
+
+            if (!speaker1 || !speaker2 || !topic) {
+                showError('Please fill in all fields.');
+                return;
+            }
+
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                const res = await fetch('/podcast/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ speaker1, speaker2, topic, turns })
+                });
+                const data = await res.json();
+                if (data.error) { showError(data.error); return; }
+
+                // Format transcript with colored speaker names
+                const lines = data.transcript.split('\n').map(line => {
+                    if (line.includes(':')) {
+                        const colonIdx = line.indexOf(':');
+                        const name = line.substring(0, colonIdx);
+                        const text = line.substring(colonIdx);
+                        return `<span class="speaker-name">${name}</span>${text}`;
+                    }
+                    return line;
+                });
+
+                document.getElementById('transcript').innerHTML = lines.join('\n');
+                document.getElementById('result').style.display = 'block';
+            } catch (e) {
+                showError('Something went wrong. Please try again.');
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
