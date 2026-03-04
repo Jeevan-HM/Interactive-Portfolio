@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Viewing {{ project }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <style>
+        .viewer-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(24, 24, 27, 0.9);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar .back-btn {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: rgba(109, 40, 217, 0.15);
+            padding: 4px 10px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .sidebar .back-btn:hover {
+            background: rgba(109, 40, 217, 0.3);
+        }
+
+        .file-tree {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .file-tree ul {
+            list-style: none;
+            padding-left: 15px;
+            display: none;
+        }
+
+        .file-tree li.open>ul {
+            display: block;
+        }
+
+        .file-item {
+            cursor: pointer;
+            padding: 6px 4px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+        }
+
+        .file-item:hover,
+        .file-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .folder-icon::before {
+            content: "▶";
+            font-size: 0.6em;
+            display: inline-block;
+            transition: transform 0.2s;
+            margin-right: 4px;
+        }
+
+        li.open>.file-item>.folder-icon::before {
+            transform: rotate(90deg);
+        }
+
+        .code-area {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            /* Atom one dark bg matching hljs */
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+
+        /* Make chat float properly over everything */
+        .chatbot-floating-btn,
+        .chatbot-container {
+            position: absolute !important;
+        }
+
+        /* Jupyter Notebook Styling */
+        .notebook-container {
+            max-width: 900px;
+            margin: 0 auto;
+            color: #ddd;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        .notebook-cell {
+            margin-bottom: 24px;
+        }
+
+        .notebook-markdown {
+            padding: 10px 0;
+            line-height: 1.6;
+        }
+
+        .notebook-markdown pre {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .notebook-markdown code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .notebook-markdown h1,
+        .notebook-markdown h2,
+        .notebook-markdown h3,
+        .notebook-markdown h4 {
+            color: #fff;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .notebook-code-cell {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .notebook-code-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            color: #888;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notebook-code-content {
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .notebook-output {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            color: #bbb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="viewer-container">
+        <div class="sidebar">
+            <h2>{{ project }} <a href="/" class="back-btn">← Home</a></h2>
+            <ul class="file-tree">
+                {% macro render_tree(nodes) %}
+                {% for node in nodes %}
+                {% if node.type == 'dir' %}
+                <li class="folder">
+                    <div class="file-item folder-name" onclick="this.parentElement.classList.toggle('open')">
+                        <span class="folder-icon"></span> 📁 {{ node.name }}
+                    </div>
+                    <ul>
+                        {{ render_tree(node.children) }}
+                    </ul>
+                </li>
+                {% else %}
+                <li>
+                    <div class="file-item file-name" data-path="{{ node.path }}"
+                        onclick="loadFile('{{ node.path }}', this)">
+                        📄 {{ node.name }}
+                    </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% endmacro %}
+                {{ render_tree(tree) }}
+            </ul>
+        </div>
+        <div class="code-area" id="code-area">
+            <div class="empty-state">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <p>Select a file from the sidebar to view its source.</p>
+                <p style="font-size: 0.85em; opacity: 0.7;">Feel free to open J.A.I.D. in the bottom corner and ask
+                    questions about the current file!</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/chatbot.html' %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // store global context for the chatbot
+        window.currentViewedFile = "";
+        window.currentViewedCode = "";
+
+        async function loadFile(path, element) {
+            document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            const codeArea = document.getElementById('code-area');
+            codeArea.innerHTML = '<div class="empty-state">Loading...</div>';
+
+            try {
+                const pathParts = path.split('/').map(encodeURIComponent).join('/');
+                const fileUrl = '/api/file/' + pathParts;
+
+                // Simple check for common image formats
+                const lowerPath = path.toLowerCase();
+                const isImage = lowerPath.endsWith('.jpg') || lowerPath.endsWith('.jpeg') ||
+                    lowerPath.endsWith('.png') || lowerPath.endsWith('.svg') ||
+                    lowerPath.endsWith('.gif') || lowerPath.endsWith('.webp');
+
+                if (isImage) {
+                    // Render as Image
+                    codeArea.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = fileUrl;
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    img.style.objectFit = 'contain';
+                    img.style.display = 'block';
+                    img.style.margin = '0 auto';
+                    codeArea.appendChild(img);
+
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = "[Image File Rendered]";
+                } else if (lowerPath.endsWith('.ipynb')) {
+                    // Try to render as Jupyter Notebook
+                    const response = await fetch(fileUrl);
+                    if (!response.ok) throw new Error("Could not load file. " + response.statusText);
+                    const content = await response.text();
+
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = content;
+                    codeArea.innerHTML = '';
+
+                    try {
+                        const notebook = JSON.parse(content);
+                        const container = document.createElement('div');
+                        container.className = 'notebook-container';
+
+                        if (notebook.cells) {
+                            notebook.cells.forEach((cell, idx) => {
+                                const cellDiv = document.createElement('div');
+                                cellDiv.className = 'notebook-cell';
+
+                                const cellData = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
+
+                                if (cell.cell_type === 'markdown') {
+                                    const mdDiv = document.createElement('div');
+                                    mdDiv.className = 'notebook-markdown';
+                                    mdDiv.innerHTML = marked.parse(cellData);
+                                    cellDiv.appendChild(mdDiv);
+                                } else if (cell.cell_type === 'code') {
+                                    const codeWrapper = document.createElement('div');
+                                    codeWrapper.className = 'notebook-code-cell';
+
+                                    const header = document.createElement('div');
+                                    header.className = 'notebook-code-header';
+                                    header.textContent = `[${cell.execution_count || ' '}] Code`;
+                                    codeWrapper.appendChild(header);
+
+                                    const contentDiv = document.createElement('div');
+                                    contentDiv.className = 'notebook-code-content';
+                                    const codePre = document.createElement('pre');
+                                    codePre.style.margin = '0';
+                                    const codeEl = document.createElement('code');
+                                    codeEl.className = 'language-python';
+                                    codeEl.textContent = cellData;
+                                    codePre.appendChild(codeEl);
+                                    contentDiv.appendChild(codePre);
+                                    codeWrapper.appendChild(contentDiv);
+
+                                    hljs.highlightElement(codeEl);
+
+                                    // Handle Basic Outputs
+                                    if (cell.outputs && cell.outputs.length > 0) {
+                                        let outText = '';
+                                        cell.outputs.forEach(out => {
+                                            if (out.text) {
+                                                outText += Array.isArray(out.text) ? out.text.join('') : out.text;
+                                            } else if (out.data && out.data['text/plain']) {
+                                                outText += Array.isArray(out.data['text/plain']) ? out.data['text/plain'].join('') : out.data['text/plain'];
+                                            }
+                                        });
+                                        if (outText.trim()) {
+                                            const outputDiv = document.createElement('div');
+                                            outputDiv.className = 'notebook-output';
+                                            outputDiv.textContent = outText;
+                                            codeWrapper.appendChild(outputDiv);
+                                        }
+                                    }
+                                    cellDiv.appendChild(codeWrapper);
+                                }
+                                container.appendChild(cellDiv);
+                            });
+                        }
+                        codeArea.appendChild(container);
+                    } catch (e) {
+                        // Fallback to text
+                        const pre = document.createElement('pre');
+                        const code = document.createElement('code');
+                        code.textContent = content;
+                        pre.appendChild(code);
+                        codeArea.appendChild(pre);
+                        hljs.highlightElement(code);
+                    }
+                } else {
+                    // Try to render as generic text/code
+                    const response = await fetch(fileUrl);
+                    if (!response.ok) throw new Error("Could not load file. " + response.statusText);
+                    const content = await response.text();
+
+                    window.currentViewedFile = path;
+                    window.currentViewedCode = content;
+
+                    const pre = document.createElement('pre');
+                    const code = document.createElement('code');
+                    code.textContent = content; // prevents html injection
+                    pre.appendChild(code);
+                    codeArea.innerHTML = '';
+                    codeArea.appendChild(pre);
+
+                    hljs.highlightElement(code);
+                }
+            } catch (err) {
+                codeArea.innerHTML = `<div class="empty-state" style="color:#ef4444;">Error: ${err.message}</div>`;
+                window.currentViewedFile = "";
+                window.currentViewedCode = "";
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

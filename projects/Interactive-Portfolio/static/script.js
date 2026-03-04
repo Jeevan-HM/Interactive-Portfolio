@@ -1,0 +1,258 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll(".card");
+
+    // Dynamic 3D tilt effect for each project card
+    cards.forEach(card => {
+        card.addEventListener("mousemove", (e) => {
+            const rect = card.getBoundingClientRect();
+
+            // Get mouse position relative to the card
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Calculate center
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Calculate rotation amount based on mouse distance from center
+            // The constraint here limits the rotation to a maximum of ~10 degrees
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        // Reset card style smoothly when mouse leaves
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+
+            // Clear inline styles after animation frame to ensure CSS transitions take over
+            setTimeout(() => {
+                card.style.transform = '';
+            }, 500);
+        });
+    });
+
+    // --- Chatbot Logic ---
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
+    const chatbotFloatingBtn = document.getElementById('chatbot-floating-btn');
+    const chatbotHeader = document.getElementById('chatbot-header');
+    const chatInput = document.getElementById('chat-input');
+    const chatSubmitBtn = document.getElementById('chat-submit');
+    const chatMessagesContainer = document.getElementById('chat-messages');
+
+    let isChatbotOpen = false;
+
+    // Toggle Chatbot
+    const toggleChatbot = () => {
+        isChatbotOpen = !isChatbotOpen;
+        if (isChatbotOpen) {
+            chatbotContainer.classList.add('active');
+            chatInput.focus({ preventScroll: true }); // Prevent jumping and blurring
+            chatbotFloatingBtn.style.transform = 'scale(0) rotate(90deg)';
+            chatbotFloatingBtn.style.opacity = '0';
+            setTimeout(() => chatbotFloatingBtn.style.pointerEvents = 'none', 300);
+
+            // Check if there is already text selected on screen when opened
+            updateSelectionPill();
+        } else {
+            chatbotContainer.classList.remove('active');
+            chatbotFloatingBtn.style.pointerEvents = 'auto';
+            chatbotFloatingBtn.style.transform = 'scale(1) rotate(0deg)';
+            chatbotFloatingBtn.style.opacity = '1';
+        }
+    };
+
+    // Store the selected text securely. This way if the user clicks inside our input box 
+    // and naturally causes the browser's native text selection to clear, we don't lose the context!
+    let activeSavedSelection = '';
+
+    // Helper to visually update the pill
+    const updateSelectionPill = () => {
+        if (!isChatbotOpen) return;
+
+        const selection = window.getSelection();
+        const text = selection ? selection.toString().trim() : '';
+
+        // Only update if text exists. If it's empty because they clicked our
+        // input box, we want to retain whatever was set previously!
+        if (text) {
+            activeSavedSelection = text;
+        }
+
+        const selectionPill = document.getElementById('selection-context-pill');
+        const selectionPillText = document.getElementById('selection-pill-text');
+
+        if (activeSavedSelection) {
+            selectionPillText.textContent = activeSavedSelection.length > 30 ? activeSavedSelection.substring(0, 30) + '...' : activeSavedSelection;
+            selectionPill.style.display = 'flex';
+        } else {
+            selectionPill.style.display = 'none';
+        }
+    };
+
+    chatbotFloatingBtn.addEventListener('click', toggleChatbot);
+    chatbotToggleBtn.addEventListener('click', toggleChatbot);
+    chatbotHeader.addEventListener('click', (e) => {
+        if (e.target !== chatbotToggleBtn && e.target.closest('.chatbot-toggle') === null) {
+            toggleChatbot();
+        }
+    });
+
+    // Handle user submitting message
+    const addMessageToChat = (text, isUser = false) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+        if (isUser) {
+            messageDiv.textContent = text;
+        } else {
+            messageDiv.innerHTML = text; // Gemini returns pre-formatted HTML 
+        }
+
+        chatMessagesContainer.appendChild(messageDiv);
+        scrollToBottom();
+    };
+
+    const addLoader = () => {
+        const loaderDiv = document.createElement('div');
+        loaderDiv.className = 'message bot-message bot-loading';
+        loaderDiv.innerHTML = `
+            <div class="loader">
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+            </div>
+        `;
+        chatMessagesContainer.appendChild(loaderDiv);
+        scrollToBottom();
+        return loaderDiv;
+    };
+
+    const scrollToBottom = () => {
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    };
+
+    const sendMessage = async () => {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        // 1. Add UX updates for sending message
+        chatInput.value = '';
+        chatInput.focus();
+        chatSubmitBtn.disabled = true;
+        addMessageToChat(text, true);
+
+        // 2. Add loading animation
+        const loaderDiv = addLoader();
+
+        try {
+            // 3. Make the API Call to Flask backend
+            const payload = { message: text };
+            if (window.currentViewedFile) {
+                payload.current_file = window.currentViewedFile;
+                payload.current_code = window.currentViewedCode;
+            }
+
+            // Capture any text the user currently has highlighted on the screen
+            if (activeSavedSelection) {
+                payload.selected_text = activeSavedSelection;
+            }
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            // 4. Remove loader and display response
+            loaderDiv.remove();
+
+            if (response.ok && data.answer) {
+                addMessageToChat(data.answer, false);
+            } else {
+                addMessageToChat(data.answer || "Sorry, I ran into an issue.", false);
+            }
+
+            // 5. Clear selection internally to mirror Copilot behavior
+            activeSavedSelection = '';
+            updateSelectionPill();
+
+            if (window.getSelection) {
+                if (window.getSelection().empty) {
+                    window.getSelection().empty();
+                } else if (window.getSelection().removeAllRanges) {
+                    window.getSelection().removeAllRanges();
+                }
+            }
+        } catch (error) {
+            console.error("Chat Error:", error);
+            loaderDiv.remove();
+            addMessageToChat("Network error. Please try again.", false);
+        } finally {
+            chatSubmitBtn.disabled = false;
+        }
+    };
+
+    chatSubmitBtn.addEventListener('click', sendMessage);
+
+    // Also submit when pressing 'Enter' on keyboard
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevents line breaks
+            sendMessage();
+        }
+    });
+
+    // Handle Context Highlighting Visuals
+    const selectionPill = document.getElementById('selection-context-pill');
+    const selectionPillText = document.getElementById('selection-pill-text');
+
+    // Prevent clicking inside the chatbot from clearing external selections
+    chatbotContainer.addEventListener('mousedown', (e) => {
+        // Only prevent default if we're not clicking an input field explicitly
+        if (e.target !== chatInput && e.target !== chatSubmitBtn) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('selectionchange', () => {
+        // Only run if chatbot is open
+        if (!isChatbotOpen) return;
+
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+
+        // If the user actively highlights new text, update our saved state.
+        if (text) {
+            activeSavedSelection = text;
+            updateSelectionPill();
+        } else {
+            // Only clear the selection if they didn't just click inside the chat menu
+            if (document.activeElement !== chatInput) {
+                activeSavedSelection = '';
+                updateSelectionPill();
+            }
+        }
+    });
+
+    // We only clear the selection if they explicitly close the chatbot
+    chatbotFloatingBtn.addEventListener('click', () => {
+        if (!isChatbotOpen) {
+            activeSavedSelection = '';
+            updateSelectionPill();
+        }
+    });
+
+    chatbotToggleBtn.addEventListener('click', () => {
+        if (!isChatbotOpen) {
+            activeSavedSelection = '';
+            updateSelectionPill();
+        }
+    });
+});
