@@ -59,3 +59,7 @@ projects/Jeevan-HM-Portfolio/
 *.log
 *.sqlite3
 live_share_link.txt
+*.webm
+Url_Audio/
+Final_Audio/
+Temp_File/

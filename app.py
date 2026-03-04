@@ -5,13 +5,78 @@
 #   "python-dotenv"
 # ]
 # ///
+import atexit
 import os
+import subprocess
+import sys
 
 import google.generativeai as genai
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_file
 
 load_dotenv()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+VENV_PYTHON = os.path.join(BASE_DIR, ".venv", "bin", "python")
+VENV_STREAMLIT = os.path.join(BASE_DIR, ".venv", "bin", "streamlit")
+_subprocesses = []
+
+
+def start_sub_apps():
+    """Launch AI Podcast and Survey Chat Bot as background processes.
+    Only runs in the main process, not in Flask's reloader child process.
+    """
+    # Flask debug reloader forks a child with WERKZEUG_RUN_MAIN=true.
+    # We only want to launch sub-apps once, from the parent/first run.
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        return
+
+    podcast_app = os.path.join(BASE_DIR, "projects", "AI-podcast", "app.py")
+    survey_app = os.path.join(BASE_DIR, "projects", "Survey-Chat-Bot", "app.py")
+
+    procs = [
+        (
+            "AI Podcast",
+            [VENV_PYTHON, podcast_app],
+            os.path.join(BASE_DIR, "projects", "AI-podcast"),
+        ),
+        (
+            "Survey Chat Bot",
+            [
+                VENV_STREAMLIT,
+                "run",
+                survey_app,
+                "--server.headless",
+                "true",
+                "--server.port",
+                "8501",
+            ],
+            BASE_DIR,
+        ),
+    ]
+
+    for name, cmd, cwd in procs:
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                cwd=cwd,
+                close_fds=True,
+                env={**os.environ, "PYTHONPATH": BASE_DIR},
+            )
+            _subprocesses.append(proc)
+            print(f"[startup] Started {name} (PID {proc.pid})")
+        except Exception as e:
+            print(f"[startup] Failed to start {name}: {e}")
+
+    def _cleanup():
+        for proc in _subprocesses:
+            proc.terminate()
+
+    atexit.register(_cleanup)
+
+
+start_sub_apps()
+
 
 # Create app and specify the static folder
 app = Flask(__name__)
